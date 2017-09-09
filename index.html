@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="/js/vue.min.js"></script>
+  <style>
+    .inactive {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <form @submit.prevent="addTodo">
+      <input type="text" v-model="todo_txt">
+    </form>
+    <ul>
+      <li v-for="todo in todos">
+        <span @click="toggleStatus(todo)" :class="{'inactive': !todo.status}">
+          {{ todo.title }}
+        </span>
+        <button @click="hapusTodo(todo)">x</button>
+      </li>
+    </ul>
+    Active Todo: {{ active }}
+    Done Todo: {{ doneTodo }}
+  </div>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        todo_txt: '',
+        todos: [],
+        id: 1
+      },
+      computed: {
+        active: function() {
+          var activeTodos = this.todos.filter(function(todo) {
+            return todo.status
+          });
+          return activeTodos.length;
+        },
+        doneTodo: function() {
+          var doneTodos = this.todos.filter(function(todo) {
+            return !todo.status
+          });
+          return doneTodos.length;
+        }
+      },
+      methods: {
+        addTodo: function() {
+          this.todos.push({
+            id: this.id,
+            title: this.todo_txt,
+            status: true
+          });
+          this.todo_txt = '';
+          this.id = this.id + 1;
+        },
+        hapusTodo: function(todo) {
+          var index = this.todos.findIndex(function(t){
+            return t.id == todo.id;
+          });
+          this.todos.splice(index, 1);
+        },
+        toggleStatus: function(todo) {
+          var target = this.todos.find(function(t){
+            return t.id == todo.id;
+          })
+          target.status = !target.status;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
